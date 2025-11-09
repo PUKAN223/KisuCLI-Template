@@ -19,6 +19,7 @@
     "npm:@minecraft/server-ui@2.0.0": "2.0.0_@minecraft+common@1.2.0",
     "npm:@minecraft/server@*": "2.3.0_@minecraft+common@1.2.0_@minecraft+vanilla-data@1.21.120",
     "npm:@minecraft/server@2.3.0": "2.3.0_@minecraft+common@1.2.0_@minecraft+vanilla-data@1.21.120",
+    "npm:@mxbe/database@~0.1.1": "0.1.1",
     "npm:@types/node@*": "24.2.0",
     "npm:esbuild@*": "0.25.11",
     "npm:esbuild@0.25.11": "0.25.11",
@@ -358,6 +359,9 @@
     },
     "@minecraft/vanilla-data@1.21.120": {
       "integrity": "sha512-Ku2oGRngFsJ/w34Fkx3T5BP5LnMGapKtrxO0ftVQFab8ipc9Yli+65B4MzorqH4zmcmoxyT1RE/1CA9JLfYEpw=="
+    },
+    "@mxbe/database@0.1.1": {
+      "integrity": "sha512-gBmhsy3cLSzVDSdOUFqkDnh7Fj0PiVfTOKFWU2Lbm4tSCcmeTWUCTX6Rdb4NxekzrcUmIpfGc2gwCrUqbYgBew=="
     },
     "@rollup/rollup-android-arm-eabi@4.52.5": {
       "integrity": "sha512-8c1vW4ocv3UOMp9K+gToY5zL2XiiVw3k7f1ksf4yO1FlDFQ1C2u72iACFnSOceJFsWskc2WZNqeRhFRPzv+wtQ==",
@@ -1876,7 +1880,8 @@
       "jsr:@std/dotenv@0.225.5",
       "npm:@minecraft/core-build-tasks@^5.5.0",
       "npm:@minecraft/server-ui@2.0.0",
-      "npm:@minecraft/server@2.3.0"
+      "npm:@minecraft/server@2.3.0",
+      "npm:@mxbe/database@~0.1.1"
     ]
   }
 }

@@ -1,9 +1,9 @@
 import { SystemBase } from "@kisu/api";
-import { BlueApple } from "./plugins/BlueApple.ts";
-import { RedApple } from "./plugins/RedApple.ts";
+import { MarketSystem } from "./plugins/MarketSystem/index.ts";
 
 new class KisuAPI extends SystemBase {
     public override onLoad(): void {
-        this.pluginManagers.registerPlugin(BlueApple, RedApple)
+        console.warn(`[KisuAPI] Loading MarketSystem Plugin...`);
+        this.pluginManagers.registerPlugin(MarketSystem)
     }
 }();
