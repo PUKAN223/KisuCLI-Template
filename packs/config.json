@@ -5,7 +5,7 @@
         "icon": "./packs/pack_icon.png",
         "version": [1, 0, 0],
         "description": "<pack_description>",
-        "seed": 12345678,
+        "seed": 0,
         "authors": ["<author_name>"]
     },
     "filters": [
