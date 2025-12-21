@@ -1,4 +1,4 @@
-import { SystemAfterEvents, SystemBeforeEvents, WorldAfterEvents, WorldBeforeEvents } from "@minecraft/server";
+import { SystemAfterEvents, SystemBeforeEvents, WorldAfterEvents, WorldBeforeEvents } from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
 import { EventPayloadMap } from "./EventPayloadMap.ts";
 
 const _WorldAfterInstance: WorldAfterEvents = {} as WorldAfterEvents;
@@ -11,6 +11,8 @@ type BeforeEvents = EventPayloadMap<typeof _WorldBeforeInstance, "Before">;
 type SAfterEvents = EventPayloadMap<typeof _SystemAfterInstance, "After">;
 type SBeforeEvents = EventPayloadMap<typeof _SystemBeforeInstance, "Before">;
 
-type WorldEvents = AfterEvents & BeforeEvents & SAfterEvents & SBeforeEvents;
+type WorldEvents = AfterEvents & BeforeEvents & SAfterEvents & SBeforeEvents & {
+  AfterTick: { currentTick: number };
+};
 
 export type { WorldEvents, AfterEvents, BeforeEvents };

@@ -1,0 +1,24 @@
+{
+    "format_version": 2,
+    "meta": {
+        "name": "<pack_name>",
+        "icon": "./packs/pack_icon.png",
+        "version": [1, 0, 0],
+        "description": "<pack_description>",
+        "seed": 12345678,
+        "authors": ["<author_name>"]
+    },
+    "filters": [
+        {
+            "name": "TSBuilds",
+            "config": {}   
+        },
+        {
+            "name": "ManifestBuilds",
+            "config": {}
+        }
+    ],
+    "env": {
+        "GamePath": "<game_path>"
+    }
+}

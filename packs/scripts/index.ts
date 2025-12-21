@@ -1,9 +1,10 @@
 import { SystemBase } from "@kisu/api";
-import { MarketSystem } from "./plugins/MarketSystem/index.ts";
+import { SamplePlugin } from "./plugins/SamplePlugin/index.ts";
 
-new class KisuAPI extends SystemBase {
+class KisuAPI extends SystemBase {
     public override onLoad(): void {
-        console.warn(`[KisuAPI] Loading MarketSystem Plugin...`);
-        this.pluginManagers.registerPlugin(MarketSystem)
+        this.pluginManagers.registerPlugin(SamplePlugin)
     }
-}();
+};
+
+new KisuAPI();

@@ -1,9 +1,9 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Market System RP",
-    "description": "Market System Addon Create For Minecraft Bedrock",
-    "uuid": "c858092b-7762-4b22-a853-f1b29a75fddc",
+    "name": "<pack_name>@1.0.0 RP",
+    "description": "<pack_description>",
+    "uuid": "0ea26557-40ff-4a7a-b988-51f5550328b0",
     "version": [
       1,
       0,
@@ -19,7 +19,7 @@
     {
       "description": "My Resource Pack",
       "type": "resources",
-      "uuid": "a68bad99-24ac-42db-8e09-207787f72671",
+      "uuid": "35df3b36-d8db-4fbe-8e26-ad3d09f59dfa",
       "version": [
         1,
         0,
@@ -29,7 +29,7 @@
   ],
   "dependencies": [
     {
-      "uuid": "18861239-939f-412e-a77e-e94f48e42e55",
+      "uuid": "c576bb0a-f753-4ffd-bbab-10918aae0df2",
       "version": [
         1,
         0,

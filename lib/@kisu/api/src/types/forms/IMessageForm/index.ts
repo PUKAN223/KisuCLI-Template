@@ -1,1 +1,1 @@
-export * from "./Elements/Button";
+export * from "./Elements/Button.ts";

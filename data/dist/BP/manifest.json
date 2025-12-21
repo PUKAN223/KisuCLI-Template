@@ -1,9 +1,9 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Market System BP",
-    "description": "Market System Addon Create For Minecraft Bedrock",
-    "uuid": "18861239-939f-412e-a77e-e94f48e42e55",
+    "name": "<pack_name>@1.0.0 BP",
+    "description": "<pack_description>",
+    "uuid": "c576bb0a-f753-4ffd-bbab-10918aae0df2",
     "version": [
       1,
       0,
@@ -20,7 +20,7 @@
       "description": "Script resources",
       "language": "javascript",
       "type": "script",
-      "uuid": "68e24fb0-6aa3-4c7d-8eba-81a4ba6d2354",
+      "uuid": "4e0f6f25-bc6a-4a71-84a1-c28edd0755a9",
       "version": [
         1,
         0,
@@ -32,14 +32,14 @@
   "dependencies": [
     {
       "module_name": "@minecraft/server",
-      "version": "2.3.0"
+      "version": "beta"
     },
     {
       "module_name": "@minecraft/server-ui",
       "version": "2.0.0"
     },
     {
-      "uuid": "c858092b-7762-4b22-a853-f1b29a75fddc",
+      "uuid": "0ea26557-40ff-4a7a-b988-51f5550328b0",
       "version": [
         1,
         0,
