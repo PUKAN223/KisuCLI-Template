@@ -1,6 +1,6 @@
-import { ActionFormData, ActionFormResponse } from "npm:@minecraft/server-ui@2.0.0";
-import { IActionFormButton, IActionFormDivider, IActionFormHeader, IActionFormLabel } from "@kisu/api";
-import { Player } from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
+import { ActionFormData, ActionFormResponse } from "@minecraft/server-ui";
+import type { IActionFormButton, IActionFormDivider, IActionFormHeader, IActionFormLabel } from "@kisu/api";
+import { Player } from "@minecraft/server";
 
 type FormElement = IActionFormButton | IActionFormDivider | IActionFormHeader | IActionFormLabel;
 
@@ -180,7 +180,9 @@ class IActionForm {
   public async show(player: Player): Promise<ActionFormResponse> {
     const form = new ActionFormData();
     form.title(this.title);
-    form.body(this.body);
+    if (this.body !== "") {
+      form.body(this.body);
+    }
 
     // Track button indices for callback handling
     let buttonIndex = 0;
@@ -199,8 +201,6 @@ class IActionForm {
         buttonIndex++;
       }
     });
-
-    form.body(this.body);
 
     try {
       const response = await form.show(player);

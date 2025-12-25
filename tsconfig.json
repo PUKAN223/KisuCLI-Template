@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    // Environment setup & latest features
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitAny": true,
+    "noPropertyAccessFromIndexSignature": false,
+
+    "paths": {
+      "@kisu/api": ["./lib/@kisu/api/index.ts"],
+      "@kisu/cli": ["./lib/@kisu/cli/index.ts"],
+      "@minecraft/server": ["./node_modules/@minecraft/server"],
+      "@minecraft/server-ui": ["./node_modules/@minecraft/server-ui"],
+      "@minecraft/math": ["./node_modules/@minecraft/math"]
+    }
+  }
+}

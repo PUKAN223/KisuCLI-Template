@@ -1,8 +1,8 @@
 {
   "format_version": 2,
   "header": {
-    "name": "DamageCancel BP",
-    "description": "DamageCancel Addon Create For Minecraft Bedrock",
+    "name": "<pack_name>",
+    "description": "<pack_description>",
     "uuid": "18861239-939f-412e-a77e-e94f48e42e55",
     "version": [
       1,
@@ -17,7 +17,7 @@
   },
   "modules": [
     {
-      "description": "Script resources",
+      "description": "Behavior Pack",
       "language": "javascript",
       "type": "script",
       "uuid": "68e24fb0-6aa3-4c7d-8eba-81a4ba6d2354",
@@ -26,7 +26,7 @@
         0,
         0
       ],
-      "entry": "scripts/Index.js"
+      "entry": "scripts/index.js"
     }
   ],
   "dependencies": [

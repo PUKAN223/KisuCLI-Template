@@ -1,13 +1,12 @@
 import { PluginBase } from "@kisu/api";
+import { system } from "@minecraft/server";
 
 type Callback<T> = (payload: T) => void;
 type Listener = { owner?: PluginBase; cb: Callback<unknown> };
-type SubscriptionCallback = () => void;
 
 export class EventHandlers<AutoEvents extends Record<string, unknown>> {
   private autoListeners = new Map<keyof AutoEvents, Listener[]>();
   private customListeners = new Map<string, Listener[]>();
-  private subscriptions = new Map<string, SubscriptionCallback>();
   private onSubscribe?: (event: string) => void;
   private onUnsubscribe?: (event: string) => void;
 
@@ -69,17 +68,23 @@ export class EventHandlers<AutoEvents extends Record<string, unknown>> {
     const list = listeners.get(event);
     if (!list) return;
 
-    const filtered = owner !== undefined
-      ? callback !== undefined
-        ? list.filter(l => !(l.owner === owner && l.cb === callback))
-        : list.filter(l => l.owner !== owner)
-      : list.filter(l => l.cb !== callback);
+    const keep: Listener[] = [];
+    list.forEach((l) => {
+      const ownedMatch = owner && l.owner === owner;
+      const cbMatch = callback && l.cb === callback;
 
-    listeners.set(event, filtered);
+      if (ownedMatch || cbMatch) {
+        return;
+      }
+
+      keep.push(l);
+    });
+
+    listeners.set(event, keep);
 
     // Unsubscribe from event if no listeners remain
-    if (filtered.length === 0 && this.onUnsubscribe && !event.startsWith("Custom")) {
-      this.onUnsubscribe(event);
+    if (keep.length === 0 && this.onUnsubscribe && !event.startsWith("Custom")) {
+      system.run(() => this.onUnsubscribe!(event));
     }
   }
 
@@ -98,12 +103,36 @@ export class EventHandlers<AutoEvents extends Record<string, unknown>> {
 
   private executeListener(listener: Listener, payload: unknown): void {
     try {
-      if (listener.owner && !listener.owner.isEnabled()) {
-        return;
-      }
       listener.cb(payload);
     } catch {
       // Swallow listener errors to avoid breaking emit loop
+    }
+  }
+
+  public suspendPlugin(owner: PluginBase): Map<string, Callback<unknown>[]> {
+    const stored = new Map<string, Callback<unknown>[]>();
+
+    const collect = (listeners: Map<string, Listener[]>) => {
+      for (const [event, list] of listeners.entries()) {
+        const owned = list.filter((listener) => listener.owner === owner);
+        if (owned.length === 0) continue;
+
+        stored.set(event as string, owned.map((listener) => listener.cb));
+        this.removeListener(event as string, owner);
+      }
+    };
+
+    collect(this.autoListeners as Map<string, Listener[]>);
+    collect(this.customListeners);
+
+    return stored;
+  }
+
+  public resumePlugin(owner: PluginBase, listeners: Map<string, Callback<unknown>[]>): void {
+    for (const [event, callbacks] of listeners.entries()) {
+      for (const cb of callbacks) {
+        this.addListener(event, cb, owner);
+      }
     }
   }
 

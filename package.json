@@ -1,0 +1,31 @@
+{
+  "name": "kisutemplate",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "chokidar-cli": "^3.0.0",
+    "jiti": "^2.6.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "lint": "bunx eslint",
+    "dev": "bun run index.ts --dev",
+    "build": "bun run ./index.ts --build",
+    "packs": "bun run ./index.ts --packs",
+    "clean": "bun run ./index.ts --clean"
+  },
+  "dependencies": {
+    "@minecraft/math": "^2.2.11",
+    "@minecraft/server": "^2.4.0",
+    "@minecraft/server-ui": "^2.0.0",
+    "chalk": "^5.6.2",
+    "esbuild": "^0.27.2",
+    "eslint": "^9.39.2",
+    "jszip": "^3.10.1",
+    "typescript-eslint": "^8.50.1"
+  }
+}

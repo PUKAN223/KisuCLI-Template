@@ -1,4 +1,4 @@
-import chalk from "jsr:@nothing628/chalk@1.0.1";
+import chalk from "chalk";
 import { FileManagers, Logger } from "@kisu/cli";
 
 class Filters {

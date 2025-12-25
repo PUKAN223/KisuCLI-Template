@@ -1,13 +1,13 @@
 import { Filters } from "@kisu/cli";
-import { Manifest } from "./types/Manifest.ts";
-import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.11.1";
-import { resolve } from "jsr:@std/path@1.1.2";
-import * as esbuild from "npm:esbuild@0.25.11";
+import type { Manifest } from "./types/Manifest.ts";
+import * as esbuild from "esbuild";
 import { parseArgs } from "./utils/parseArgs.ts";
-import chalk from "jsr:@nothing628/chalk@1.0.1";
+import chalk from "chalk";
+import { spawn } from "bun";
+import * as fs from "fs";
 
-const [settings] = parseArgs(Deno.args);
-const configPath = resolve("./deno.json");
+const [settings] = parseArgs(Bun.argv.slice(2));
+
 
 class TSBuilds extends Filters {
   private typescript = "ts";
@@ -20,30 +20,26 @@ class TSBuilds extends Filters {
     if (!entryPath) return;
 
     const scriptPath = "./packs" + "/" + entryPath.replace(".js", `.${this.typescript}`);
-    
-    // Run linter before building
-    this.msg(`Running linter: ${chalk.yellow("deno lint")}`);
-    const lintProcess = new Deno.Command("deno", {
-      args: ["lint", "./packs", "./lib"],
-      stdout: "piped",
-      stderr: "piped",
+
+    // Run linter before building (surface output to console)
+    this.msg(`Running linter: ${chalk.yellow("bunx eslint ./packs ./lib")}`);
+    const lintProcess = spawn(["bunx", "eslint", "./packs", "./lib"], {
+      stdout: "inherit",
+      stderr: "inherit",
     });
-    
-    const lintResult = await lintProcess.output();
-    
-    if (!lintResult.success) {
-      const errorOutput = new TextDecoder().decode(lintResult.stderr);
-      console.error(errorOutput);
+
+    const exitCode = await lintProcess.exited;
+
+    if (exitCode !== 0) {
       this.msg(`${chalk.red("✗")} Linting failed. Fix errors before building.`);
       return;
     }
-    
+
     this.msg(`${chalk.green("✓")} Linting passed`);
-    
+
     // Build KisuLib.js first (contains @kisu/api)
     this.msg(`Building library: ${chalk.blue("KisuLib.js")}`);
     await esbuild.build({
-      plugins: denoPlugins({ configPath }) as esbuild.Plugin[],
       bundle: true,
       entryPoints: ["./lib/@kisu/api/index.ts"],
       external: [
@@ -72,7 +68,6 @@ class TSBuilds extends Filters {
             });
           },
         },
-        ...denoPlugins({ configPath }) as esbuild.Plugin[],
       ],
       bundle: true,
       entryPoints: [
@@ -96,7 +91,7 @@ class TSBuilds extends Filters {
   public readManifest(bpPath: string): Manifest | null {
     try {
       return JSON.parse(
-        Deno.readTextFileSync(`${bpPath}/manifest.json`),
+        fs.readFileSync(`${bpPath}/manifest.json`, "utf-8"),
       ) as Manifest;
     } catch {
       return null;

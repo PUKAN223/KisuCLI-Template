@@ -1,4 +1,5 @@
 import { File } from "@kisu/cli";
+import * as fs from "fs/promises"
 
 class FileManagers {
   constructor() {
@@ -6,126 +7,120 @@ class FileManagers {
 
   //Directory Methods
   async copyDirectory(source: string, destination: string) {
-    try {
-      await Deno.stat(source);
-    } catch (error) {
-      if (error instanceof Deno.errors.NotFound) {
-        return;
-      }
-      throw error;
-    }
-    await Deno.mkdir(destination, { recursive: true });
-    for await (const entry of Deno.readDir(source)) {
+    await fs.mkdir(destination, { recursive: true });
+    const entries = await fs.readdir(source, { withFileTypes: true });
+    for (const entry of entries) {
       const srcPath = `${source}/${entry.name}`;
       const destPath = `${destination}/${entry.name}`;
-      if (entry.isDirectory) {
+      if (entry.isDirectory()) {
         await this.copyDirectory(srcPath, destPath);
       } else {
-        await Deno.copyFile(srcPath, destPath);
+        await fs.copyFile(srcPath, destPath);
       }
     }
   }
 
-  public readDirectory(path: string) {
-    return Deno.readDirSync(path);
+  public async exists(path: string) {
+    try {
+      await fs.stat(path);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  public removeDirectory(path: string) {
+  public async readDirectory(path: string) {
+    return await fs.readdir(path);
+  }
+
+  public async removeDirectory(path: string) {
     try {
-      Deno.statSync(path);
-      Deno.removeSync(path, { recursive: true });
-    } catch (error) {
-      if (!(error instanceof Deno.errors.NotFound)) {
-        throw error;
-      }
+      await fs.stat(path);
+      await fs.rm(path, { recursive: true });
+    } catch {
       // Silently ignore if directory doesn't exist
     }
   }
 
-  public eachFileInDirectory(path: string, callback: (file: File) => void) {
-    const dir = Deno.readDirSync(path);
+  public async eachFileInDirectory(path: string, callback: (file: File) => void) {
+    const dir = await fs.readdir(path, { withFileTypes: true });
     for (const file of dir) {
-      if (!file.isFile) {
-        this.eachFileInDirectory(`${path}/${file.name}`, callback);
+      if (!file.isFile()) {
+        await this.eachFileInDirectory(`${path}/${file.name}`, callback);
         continue;
       }
       // console.log(path)
       const fileInfo: File = new File({
-        name: file.name.split(".")[0],
+        name: file.name.split(".")[0] as string,
         path: `${path}/${file.name}`,
-        content: this.readFile(`${path}/${file.name}`),
+        content: await this.readFile(`${path}/${file.name}`),
       });
       callback(fileInfo);
     }
   }
 
-  public createDirectory(path: string) {
-    Deno.mkdirSync(path, { recursive: true });
+  public async createDirectory(path: string) {
+    await fs.mkdir(path, { recursive: true });
   }
 
-  public renameDirectory(oldPath: string, newPath: string) {
-    Deno.renameSync(oldPath, newPath);
+  public async renameDirectory(oldPath: string, newPath: string) {
+    await fs.rename(oldPath, newPath);
   }
 
   //File Methods
   public readFile(path: string) {
     const extension = path.split(".").pop()?.toLowerCase();
     if (extension && ["png", "jpg", "jpeg", "gif", "webp", "bmp"].includes(extension)) {
-      return Deno.readFileSync(path);
+      return fs.readFile(path);
     }
-    return Deno.readTextFileSync(path);
+    return fs.readFile(path, "utf-8");
   }
 
-  public writeFile(path: string, content: string | Uint8Array) {
+  public async writeFile(path: string, content: string | Uint8Array) {
     //create directory if not exists
-    this.createDirectory(path.split("/").slice(0, -1).join("/"));
+    await this.createDirectory(path.split("/").slice(0, -1).join("/"));
     const extension = path.split(".").pop()?.toLowerCase();
     if (extension && ["png", "jpg", "jpeg", "gif", "webp", "bmp"].includes(extension)) {
       if (content instanceof Uint8Array) {
-        Deno.writeFileSync(path, content);
+        return fs.writeFile(path, content);
       } else {
         throw new Error("Binary file content must be provided as Uint8Array");
       }
     } else {
       if (typeof content === "string") {
-        Deno.writeTextFileSync(path, content);
+        return fs.writeFile(path, content);
       } else {
         throw new Error("Text file content must be provided as string");
       }
     }
   }
 
-  public removeFile(path: string) {
+  public async removeFile(path: string) {
     try {
-      // Check if file exists before attempting to remove
-      Deno.statSync(path);
-      Deno.removeSync(path);
-    } catch (error) {
-      if (!(error instanceof Deno.errors.NotFound)) {
-        throw error;
-      }
-      // Silently ignore if file doesn't exist
+      await fs.rm(path);
+    } catch (error: unknown) {
+      const err = error as NodeJS.ErrnoException;
+      if (err.code !== "ENOENT") throw error;
     }
   }
 
-  public copyFile(source: string, destination: string) {
+  public async copyFile(source: string, destination: string) {
     try {
-      Deno.statSync(source);
-    } catch (error) {
-      if (error instanceof Deno.errors.NotFound) {
-        return;
-      }
+      await fs.stat(source);
+    } catch (error: unknown) {
+      const err = error as NodeJS.ErrnoException;
+      if (err.code === "ENOENT") return; // skip if source missing
       throw error;
     }
-    Deno.copyFileSync(source, destination);
+    await fs.copyFile(source, destination);
   }
 
-  public createFile(path: string) {
-    Deno.writeTextFileSync(path, "");
+  public async createFile(path: string) {
+    await fs.writeFile(path, "");
   }
 
-  public renameFile(oldPath: string, newPath: string) {
-    Deno.renameSync(oldPath, newPath);
+  public async renameFile(oldPath: string, newPath: string) {
+    await fs.rename(oldPath, newPath);
   }
 }
 

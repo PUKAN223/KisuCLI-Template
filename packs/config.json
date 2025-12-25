@@ -1,7 +1,7 @@
 {
     "format_version": 2,
     "meta": {
-        "name": "<pack_name>",
+        "name": "TEST",
         "icon": "./packs/pack_icon.png",
         "version": [1, 0, 0],
         "description": "<pack_description>",
@@ -19,6 +19,5 @@
         }
     ],
     "env": {
-        "GamePath": "<game_path>"
     }
 }

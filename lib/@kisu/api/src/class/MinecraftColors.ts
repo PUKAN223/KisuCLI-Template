@@ -38,7 +38,7 @@ class MinecraftColors {
     }
 
     get blue(): string {
-        return `§9${this.str}§r`;
+        return `§b${this.str}§r`;
     }
 
     get yellow(): string {

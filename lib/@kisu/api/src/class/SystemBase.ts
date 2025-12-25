@@ -9,17 +9,19 @@ import {
   world,
   WorldAfterEvents,
   WorldBeforeEvents,
-} from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
+} from "@minecraft/server";
 import {
   ConfigManagers,
   EventHandlers,
   Logger,
   PluginManagers,
   SettingMenuBuilders,
-  SystemBaseOptions,
-  WorldEvents,
+  type SystemBaseOptions,
+  type WorldEvents,
 } from "@kisu/api";
 import { PlayerManagers } from "./PlayerManagers.ts";
+import { SystemPlugin } from "../plugins/SystemPlugin/index.ts";
+// import { SystemPlugin } from "../plugins/SystemPlugin/index.ts";
 
 class SystemBase {
   public world: World;
@@ -33,7 +35,9 @@ class SystemBase {
   private options: SystemBaseOptions = {
     settingItemType: "minecraft:clock",
   };
-  private eventSubscriptions = new Map<string, () => void>();
+  
+  // Track subscribed handlers alongside their owning signal so we can unsubscribe with the same callback
+  private eventSubscriptions = new Map<string, { signal: { unsubscribe: (cb: (arg: unknown) => void) => void }; handler: (arg: unknown) => void }>();
   private startTime: number = Date.now();
 
   constructor(options?: SystemBaseOptions) {
@@ -70,7 +74,9 @@ class SystemBase {
   private setupDynamicEventMapping() {
     this.events.setSubscriptionHandlers(
       (event) => this.subscribeToEvent(event),
-      (event) => this.unsubscribeFromEvent(event),
+      (event) => {
+        this.unsubscribeFromEvent(event)
+      },
     );
   }
 
@@ -85,51 +91,63 @@ class SystemBase {
     // Try world events first
     if (isAfter && lowerEventName in world.afterEvents) {
       const typedKey = lowerEventName as keyof WorldAfterEvents;
-      const unsubscribe = world.afterEvents[typedKey].subscribe((arg) => {
-        this.events.emit(eventName as keyof WorldEvents, arg);
-      });
-      this.eventSubscriptions.set(eventName, unsubscribe as () => void);
+      const handler = (arg: unknown) => {
+        this.events.emit(eventName as keyof WorldEvents, arg as WorldEvents[keyof WorldEvents]);
+      };
+      world.afterEvents[typedKey].subscribe(handler);
+      this.eventSubscriptions.set(eventName, { signal: world.afterEvents[typedKey], handler });
     } else if (!isAfter && lowerEventName in world.beforeEvents) {
       const typedKey = lowerEventName as keyof WorldBeforeEvents;
-      const unsubscribe = world.beforeEvents[typedKey].subscribe((arg) => {
-        this.events.emit(eventName as keyof WorldEvents, arg);
-      });
-      this.eventSubscriptions.set(eventName, unsubscribe as () => void);
+      const handler = (arg: unknown) => {
+        this.events.emit(eventName as keyof WorldEvents, arg as WorldEvents[keyof WorldEvents]);
+      };
+      world.beforeEvents[typedKey].subscribe(handler);
+      this.eventSubscriptions.set(eventName, { signal: world.beforeEvents[typedKey], handler });
     } // Try system events
     else if (isAfter && lowerEventName in system.afterEvents) {
       const typedKey = lowerEventName as keyof SystemAfterEvents;
-      const unsubscribe = system.afterEvents[typedKey].subscribe((arg) => {
-        this.events.emit(eventName as keyof WorldEvents, arg);
-      });
-      this.eventSubscriptions.set(eventName, unsubscribe as () => void);
+      const handler = (arg: unknown) => {
+        this.events.emit(eventName as keyof WorldEvents, arg as WorldEvents[keyof WorldEvents]);
+      };
+      system.afterEvents[typedKey].subscribe(handler);
+      this.eventSubscriptions.set(eventName, { signal: system.afterEvents[typedKey], handler });
     } else if (!isAfter && lowerEventName in system.beforeEvents) {
       const typedKey = lowerEventName as keyof SystemBeforeEvents;
-      const unsubscribe = system.beforeEvents[typedKey].subscribe((arg) => {
-        this.events.emit(eventName as keyof WorldEvents, arg);
-      });
-      this.eventSubscriptions.set(eventName, unsubscribe as () => void);
+      const handler = (arg: unknown) => {
+        this.events.emit(eventName as keyof WorldEvents, arg as WorldEvents[keyof WorldEvents]);
+      };
+      system.beforeEvents[typedKey].subscribe(handler);
+      this.eventSubscriptions.set(eventName, { signal: system.beforeEvents[typedKey], handler });
     }
   }
 
   private unsubscribeFromEvent(eventName: string) {
-    const unsubscribe = this.eventSubscriptions.get(eventName);
-    if (unsubscribe) {
-      unsubscribe();
-      this.eventSubscriptions.delete(eventName);
-    }
+    const subscription = this.eventSubscriptions.get(eventName);
+    if (!subscription) return;
+
+    system.run(() => subscription.signal.unsubscribe(subscription.handler));
+    this.eventSubscriptions.delete(eventName);
   }
 
-  public onLoad(ev: StartupEvent): void {
-    ev;
-  }
+  public onLoad(_ev: StartupEvent): void {}
 
   private onStartup(ev: StartupEvent): void {
-    this.onLoad(ev);
-
+    try {
+      this.onLoad(ev);
+    } catch (error) {
+      this.logger.error(`Error during onLoad: ${(error as Error)}`);
+    }
+    this.pluginManagers.registerPlugin(SystemPlugin);
     const plugins = this.pluginManagers.getPlugins();
     let pluginLoadCount = 0;
     for (const plugin of plugins) {
-      plugin.onEnable(ev);
+      try {
+        plugin.onEnable(ev);
+      } catch (error) {
+        this.logger.error(
+          `Error during onEnable of plugin ${plugin.name}: ${(error as Error)}`,
+        );
+      }
       pluginLoadCount++;
     }
 

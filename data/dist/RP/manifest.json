@@ -1,9 +1,9 @@
 {
   "format_version": 2,
   "header": {
-    "name": "<pack_name>@1.0.0 RP",
+    "name": "TEST@1.0.0 RP",
     "description": "<pack_description>",
-    "uuid": "0ea26557-40ff-4a7a-b988-51f5550328b0",
+    "uuid": "cdbe0641-cba2-4d88-8359-d45c4223cdb7",
     "version": [
       1,
       0,
@@ -17,9 +17,9 @@
   },
   "modules": [
     {
-      "description": "My Resource Pack",
+      "description": "Resource Pack",
       "type": "resources",
-      "uuid": "35df3b36-d8db-4fbe-8e26-ad3d09f59dfa",
+      "uuid": "f6eb2585-300b-4bcb-9de2-09d8482ca93d",
       "version": [
         1,
         0,
@@ -29,7 +29,7 @@
   ],
   "dependencies": [
     {
-      "uuid": "c576bb0a-f753-4ffd-bbab-10918aae0df2",
+      "uuid": "4032789a-7931-4e6b-aca9-13d51ce8751c",
       "version": [
         1,
         0,

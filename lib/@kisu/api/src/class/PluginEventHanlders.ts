@@ -1,4 +1,4 @@
-import { EventHandlers, PluginBase, WorldEvents } from "@kisu/api";
+import { EventHandlers, PluginBase, type WorldEvents } from "@kisu/api";
 
 class PluginEventHandlers {
   private plugin: PluginBase;

@@ -1,15 +1,10 @@
-import { SystemAfterEvents, SystemBeforeEvents, WorldAfterEvents, WorldBeforeEvents } from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
-import { EventPayloadMap } from "./EventPayloadMap.ts";
+import { SystemAfterEvents, SystemBeforeEvents, WorldAfterEvents, WorldBeforeEvents } from "@minecraft/server";
+import type { EventPayloadMap } from "./EventPayloadMap.ts";
 
-const _WorldAfterInstance: WorldAfterEvents = {} as WorldAfterEvents;
-const _WorldBeforeInstance: WorldBeforeEvents = {} as WorldBeforeEvents;
-const _SystemAfterInstance: SystemAfterEvents = {} as SystemAfterEvents;
-const _SystemBeforeInstance: SystemBeforeEvents = {} as SystemBeforeEvents;
-
-type AfterEvents = EventPayloadMap<typeof _WorldAfterInstance, "After">;
-type BeforeEvents = EventPayloadMap<typeof _WorldBeforeInstance, "Before">;
-type SAfterEvents = EventPayloadMap<typeof _SystemAfterInstance, "After">;
-type SBeforeEvents = EventPayloadMap<typeof _SystemBeforeInstance, "Before">;
+type AfterEvents = EventPayloadMap<WorldAfterEvents, "After">;
+type BeforeEvents = EventPayloadMap<WorldBeforeEvents, "Before">;
+type SAfterEvents = EventPayloadMap<SystemAfterEvents, "After">;
+type SBeforeEvents = EventPayloadMap<SystemBeforeEvents, "Before">;
 
 type WorldEvents = AfterEvents & BeforeEvents & SAfterEvents & SBeforeEvents & {
   AfterTick: { currentTick: number };

@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "sources": ["../../../../packs/scripts/Index.ts", "../../../../packs/scripts/plugins/SamplePlugin/index.ts"],
+  "sources": ["../../../../packs/scripts/index.ts", "../../../../packs/scripts/plugins/SamplePlugin/index.ts"],
   "sourcesContent": ["import { SystemBase } from \"@kisu/api\";\r\nimport { SamplePlugin } from \"./plugins/SamplePlugin/index.ts\";\r\n\r\nclass KisuAPI extends SystemBase {\r\n    public override onLoad(): void {\r\n        this.pluginManagers.registerPlugin(SamplePlugin)\r\n    }\r\n};\r\n\r\nnew KisuAPI();", "import { PluginBase } from \"@kisu/api\";\r\n\r\nclass SamplePlugin extends PluginBase {\r\n    public override onLoad(): void {\r\n      this.logger.info(\"SamplePlugin has been loaded!\");\r\n    }\r\n}\r\n\r\nexport { SamplePlugin };"],
   "mappings": ";AAAA,SAAS,kBAAkB;;;ACA3B,SAAS,kBAAkB;AAE3B,IAAM,eAAN,cAA2B,WAAW;AAAA,EAClB,SAAe;AAC7B,SAAK,OAAO,KAAK,+BAA+B;AAAA,EAClD;AACJ;;;ADHA,IAAM,UAAN,cAAsB,WAAW;AAAA,EACb,SAAe;AAC3B,SAAK,eAAe,eAAe,YAAY;AAAA,EACnD;AACJ;AAEA,IAAI,QAAQ;",
   "names": []

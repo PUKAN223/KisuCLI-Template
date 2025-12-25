@@ -1,4 +1,4 @@
-// packs/scripts/Index.ts
+// packs/scripts/index.ts
 import { SystemBase } from "./KisuLib.js";
 
 // packs/scripts/plugins/SamplePlugin/index.ts
@@ -9,11 +9,11 @@ var SamplePlugin = class extends PluginBase {
   }
 };
 
-// packs/scripts/Index.ts
+// packs/scripts/index.ts
 var KisuAPI = class extends SystemBase {
   onLoad() {
     this.pluginManagers.registerPlugin(SamplePlugin);
   }
 };
 new KisuAPI();
-//# sourceMappingURL=Index.js.map
+//# sourceMappingURL=index.js.map

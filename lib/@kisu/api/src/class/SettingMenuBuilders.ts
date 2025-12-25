@@ -1,10 +1,10 @@
-import { Player } from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
+import { Player } from "@minecraft/server";
 import {
   IActionForm,
   IModalForm,
   PluginBase,
   PluginManagers,
-  PluginSettingOptions,
+  type PluginSettingOptions,
 } from "@kisu/api";
 
 class SettingMenuBuilders {
@@ -26,6 +26,7 @@ class SettingMenuBuilders {
     settingMain.addLabel(`§7Plugins (§c${plugins.length}§7)§r`);
 
     for (const plugin of plugins) {
+      if (plugin.isRuntime) continue;
       this.addPluginButton(settingMain, plugin, pl, pluginManagers);
     }
 
@@ -38,7 +39,7 @@ class SettingMenuBuilders {
     player: Player,
     pluginManagers: PluginManagers,
   ): void {
-    const settings = new SettingMenu(plugin, plugin.getSettings());
+    const settings = new SettingMenu(plugin, plugin.getPluginSettings());
     const statusText = plugin.isEnabled() ? "§2Enabled" : "§cDisabled";
 
     form.addButton(
@@ -55,26 +56,53 @@ class SettingMenuBuilders {
     player: Player,
     pluginManagers: PluginManagers,
   ): void {
-    const settings = new SettingMenu(plugin, plugin.getSettings());
-    const page = settings.getPage();
+    const settings = new SettingMenu(plugin, plugin.getPluginSettings());
+    const advancedSettings = plugin.getAdvancedSettings(player, plugin);
 
-    page.show(player).then((res) => {
-      if (res.canceled) return;
+    const showDefaultSettings = () => {
+      const page = settings.getPage();
 
-      this.savePluginSettings(plugin, res.formValues as (string | number | boolean)[]);
-      this.settingMenu(player, pluginManagers);
-    });
+      page.show(player).then((res) => {
+        if (res.canceled) return;
+
+        this.savePluginSettings(
+          plugin,
+          res.formValues as (string | number | boolean)[],
+          pluginManagers,
+        );
+
+        this.settingMenu(player, pluginManagers);
+      });
+    }
+
+    const showAdvancedSettings = () => {
+      advancedSettings!();
+    }
+
+    if (advancedSettings) {
+      const settingSelectionMenu = new IActionForm("Settings Menu", "Choose an option:");
+      settingSelectionMenu.addButton("Advanced Settings", "textures/ui/settings_glyph_color_2x", () => {
+        showAdvancedSettings();
+      });
+      settingSelectionMenu.addButton("Default Settings", "textures/ui/icon_setting", () => {
+        showDefaultSettings();
+      });
+      settingSelectionMenu.show(player);
+    } else {
+      showDefaultSettings();
+    }
   }
 
   private savePluginSettings(
     plugin: PluginBase,
     formValues: (string | number | boolean)[],
+    pluginManagers: PluginManagers,
   ): void {
     const startIndex = 2; // Skip label and divider
     const config = plugin.config.get() ?? {};
-    const settingsKeysNone = Object.keys(plugin.getSettings());
+    const settingsKeysNone = Object.keys(plugin.getPluginSettings());
     const settingsKeys = settingsKeysNone.filter(
-      (key) => plugin.getSettings()[key].canUserModify !== false,
+      (key) => plugin.getPluginSettings()[key]?.canUserModify !== false,
     );
 
     for (let i = startIndex; i < formValues.length - 1; i++) {
@@ -82,7 +110,8 @@ class SettingMenuBuilders {
       if (value === undefined) continue;
 
       const key = settingsKeys[i - startIndex];
-      const setting = plugin.getSettings()[key];
+      if (!key) continue;
+      const setting = plugin.getPluginSettings()[key];
       if (!setting) continue;
 
       config[key] = {
@@ -92,6 +121,8 @@ class SettingMenuBuilders {
     }
 
     plugin.config.set(config);
+
+    pluginManagers.applyPluginState(plugin);
   }
 
   private convertSettingValue(

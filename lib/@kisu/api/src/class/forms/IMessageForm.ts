@@ -1,8 +1,6 @@
-import { MessageFormData, MessageFormResponse } from "npm:@minecraft/server-ui@2.0.0";
-import { Player } from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
-import { IMessageFormButton } from "@kisu/api"
-
-type FormElement = IMessageFormButton;
+import { MessageFormData, MessageFormResponse } from "@minecraft/server-ui";
+import { Player } from "@minecraft/server";
+import type { IMessageFormButton } from "@kisu/api"
 
 class IMessageForm {
   private title: string;

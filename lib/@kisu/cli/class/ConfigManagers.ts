@@ -1,4 +1,4 @@
-import { ConfigOptions, FileManagers, Logger } from "@kisu/cli";
+import { FileManagers, Logger, type ConfigOptions } from "@kisu/cli";
 
 class ConfigManagers {
   private fileManagers: FileManagers;
@@ -10,9 +10,9 @@ class ConfigManagers {
     this.logger = new Logger();
   }
 
-  public getConfig() {
+  public async getConfig() {
     const config: ConfigOptions = JSON.parse(
-      this.fileManagers.readFile(this.configPath).toString(),
+      (await this.fileManagers.readFile(this.configPath)).toString(),
     );
 
     return config;

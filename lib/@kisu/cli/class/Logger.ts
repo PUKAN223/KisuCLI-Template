@@ -1,13 +1,13 @@
-import chalk, { ChalkObj } from "jsr:@nothing628/chalk@1.0.1"
+import chalk, { type ChalkInstance } from "chalk"
 
 class Logger {
     private chalk = chalk;
 
-    private prefix(type: string, color: ChalkObj) {
+    private prefix(type: string, color: ChalkInstance) {
         return color(` ${type} `) + `:`;
     }
 
-    public msg(message: string, type: string, color: ChalkObj) {
+    public msg(message: string, type: string, color: ChalkInstance) {
         const prefix = this.prefix(type.toUpperCase(), color);
 
         console.log(`${prefix} ${this.chalk.grey(message)}`);
@@ -31,13 +31,13 @@ class Logger {
     }
 
     public debug(message: string) {
-        const prefix = this.prefix("DEBUG", this.chalk.bgHex("#800080") as ChalkObj);
+        const prefix = this.prefix("DEBUG", this.chalk.bgHex("#800080"));
         console.log(`${prefix} ${this.chalk.grey(message)}`);
     }
 
     public process(message: string) {
         //Yellow
-        const prefix = this.prefix("PROCESS", this.chalk.bgHex("#FFFF00") as ChalkObj);
+        const prefix = this.prefix("PROCESS", this.chalk.bgHex("#FFFF00"));
         console.log(`${prefix} ${this.chalk.grey(message)}`)
     }
 }

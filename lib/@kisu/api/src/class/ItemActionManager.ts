@@ -1,5 +1,5 @@
-import { Entity, ItemStack } from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
-import { Player } from "npm:@minecraft/server@2.5.0-beta.1.21.131-stable";
+import { Entity, ItemStack } from "@minecraft/server";
+import { Player } from "@minecraft/server";
 import { PluginBase } from "./PluginBase.ts";
 
 const ItemActionRegistry = new Map<string, ItemActions>();
@@ -37,9 +37,12 @@ class ItemActions {
     }
 
     //WIP
-    public onHitEntity(_callback: (player: Player, item: ItemStack, entity: Entity) => void) {
-        this.plugin.events.on("AfterEntityHurt", (_ev) => {
-            
+    public onHitEntity(callback: (player: Player, item: ItemStack, entity: Entity) => void) {
+        this.plugin.events.on("AfterEntityHurt", (ev) => {
+            const player = ev.damageSource.damagingEntity as Player;
+            const items = player?.getComponent("inventory")?.container.getItem(player.selectedSlotIndex);
+            if (!items) return;
+            callback(player, items, ev.hurtEntity);
         });
     }
 }

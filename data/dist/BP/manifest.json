@@ -1,9 +1,9 @@
 {
   "format_version": 2,
   "header": {
-    "name": "<pack_name>@1.0.0 BP",
+    "name": "TEST@1.0.0 BP",
     "description": "<pack_description>",
-    "uuid": "c576bb0a-f753-4ffd-bbab-10918aae0df2",
+    "uuid": "4032789a-7931-4e6b-aca9-13d51ce8751c",
     "version": [
       1,
       0,
@@ -17,16 +17,16 @@
   },
   "modules": [
     {
-      "description": "Script resources",
+      "description": "Behavior Pack",
       "language": "javascript",
       "type": "script",
-      "uuid": "4e0f6f25-bc6a-4a71-84a1-c28edd0755a9",
+      "uuid": "83254542-5d67-4bcf-8866-3a06f771020c",
       "version": [
         1,
         0,
         0
       ],
-      "entry": "scripts/Index.js"
+      "entry": "scripts/index.js"
     }
   ],
   "dependencies": [
@@ -39,7 +39,7 @@
       "version": "2.0.0"
     },
     {
-      "uuid": "0ea26557-40ff-4a7a-b988-51f5550328b0",
+      "uuid": "cdbe0641-cba2-4d88-8359-d45c4223cdb7",
       "version": [
         1,
         0,

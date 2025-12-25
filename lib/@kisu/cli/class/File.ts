@@ -1,4 +1,4 @@
-import { FileOptions } from "../types/FileOptions.ts";
+import type { FileOptions } from "../types/FileOptions.ts";
 import { FileManagers } from "./FileManagers.ts";
 
 class File {
